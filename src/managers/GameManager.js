@@ -1,3 +1,5 @@
+import { ApplicationViews } from '../views/ApplicationViews'
+
 export const getGames = () => {
     return fetch("http://localhost:8000/games", {
         headers:{
@@ -21,9 +23,11 @@ export const getGameTypes = () => {
 
 export const createGame = (game) => {
     return fetch("http://localhost:8000/games", { 
+        method: "POST",
         headers:{
+            "Content-Type": "applicationView/json",
             "Authorization": `Token ${localStorage.getItem("lu_token")}`
-        }
+        },
+        body: JSON.stringify(game)
     })
-        .then()
 }
