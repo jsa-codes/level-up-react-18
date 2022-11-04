@@ -30,6 +30,11 @@ export const GameForm = () => {
 
     return (
         <form className="gameForm">
+            <button className="btn btn-2 btn-sep icon-create"
+                    onClick={() => {
+                        navigate({ pathname: "/games/new" })
+                    }}
+                >Register New Game</button>
             <h2 className="gameForm__title">Register New Game</h2>
             <fieldset>
                 <div className="form-group">
