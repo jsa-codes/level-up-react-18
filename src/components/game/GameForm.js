@@ -21,11 +21,16 @@ export const GameForm = () => {
     })
 
     useEffect(() => {
+        getGameTypes().then(data => setGameTypes(data))
         // TODO: Get the game types, then set the state
     }, [])
 
     const changeGameState = (domEvent) => {
         // TODO: Complete the onChange function
+        const newGameState = { ...currentGame}
+        newGameState[domEvent.target.id] = domEvent.target.value
+        setCurrentGame(newGameState)
+
     }
 
     return (
@@ -39,14 +44,53 @@ export const GameForm = () => {
             <fieldset>
                 <div className="form-group">
                     <label htmlFor="title">Title: </label>
-                    <input type="text" name="title" required autoFocus className="form-control"
+                    <input type="text" name="title" id="title" required autoFocus className="form-control"
                         value={currentGame.title}
+                        onChange={changeGameState}
+                        />
+                </div>
+            </fieldset>
+            <fieldset>
+                <div className="form-group">
+                    <label htmlFor="title">Maker: </label>
+                    <input type="text" name="maker" id="maker" required autoFocus className="form-control"
+                        value={currentGame.maker}
                         onChange={changeGameState}
                     />
                 </div>
             </fieldset>
+            <fieldset>
+                <div className="form-group">
+                    <label htmlFor="numberOfPlayers">Number of Players: </label>
+                    <input type="number" name="numberOfPlayers" id="numberOfPlayers" required autoFocus className="form-control"
+                        value={currentGame.numberOfPlayers}
+                        onChange={changeGameState}
+                    />
+                </div>
+            </fieldset>
+            <fieldset>
+                <div className="form-group">
+                    <label htmlFor="numberOfPlayers">Skill Level: </label>
+                    <input type="number" name="skillLevel" id="skillLevel" required autoFocus className="form-control"
+                        value={currentGame.skillLevel}
+                        onChange={changeGameState}
+                    />
+                </div>
+            </fieldset>
+            <fieldset>
+                <div className="form-group">
+                <label htmlFor="gameType">Type of Game: </label>
+                    <select name="gameType" id="gameTypeId"
+                        onChange={changeGameState}
+                        defaultValue={currentGame.gameTypeId}>
+                    <option value="0">Choose the Type of Game</option>
+                    {
+                        gameTypes.map(gameType => <option key={gameType.id} value={gameType.id}>{gameType.label}</option>)
+                    }
+                    </select>
+                </div>
+            </fieldset>
 
-            {/* TODO: create the rest of the input fields */}
 
             <button type="submit"
                 onClick={evt => {

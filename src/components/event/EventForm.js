@@ -1,73 +1,183 @@
-import { useState, useEffect } from "react"
-import { useNavigate } from 'react-router-dom'
-import { createEvent, getEvents, getEventTypes } from '../../managers/EventManager.js'
-import { getGameTypes } from '../../managers/GameManager.js'
+import React, { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 
 export const EventForm = () => {
-    const navigate = useNavigate()
-    const [eventTypes, setEventTypes] = useState([])
 
-    /*
-        Since the input fields are bound to the values of
-        the properties of this state variable, you need to
-        provide some default values.
-    */
-    const [currentEvent, setCurrentEvent] = useState({
-        event: "",
+    const [event, setEvent] = useState({
         organizer: "",
         description: "",
-        date: "",
-        time: ""
+        game: "",
+        eventTypeId: 0,
+        date:"" 
     })
 
-    useEffect(() => {
-        // TODO: Get the event types, then set the state
-        getEventTypes().then(data => setEventTypes)
-    }, [])
+    const navigate = useNavigate()
+    const [eventTypes, setEventTypes] = useState()
 
-    const changeEventState = (domEvent) => {
-        // TODO: Complete the onChange function
+    useEffect(() => {
+        fetch(`http://localhost:8000/eventTypes`)
+            .then((response) => response.json())
+            .then((eventTypeArray) => {
+                setEventTypes(eventTypeArray)
+            })
+    
+    }, [])
+    
+
+    // * TODO :
+    // 1) Set state variable
+    // 2) Create fetch call
+
+    const createEvent = (evt) => {
+        evt.preventDefault()
+
+        const fetchOption = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                organizer: event.organizer,
+                description: event.description,
+                numberOfPlayers: event.numberOfPlayers,
+                skillLevel: event.skillLevel,
+                eventTypeId: event.eventTypeId
+            })
+        }
+
+        return fetch("http://localhost:3000/events", fetchOption)
+            .then(() => {
+                navigate("/events")
+            })
     }
 
+    
+
     return (
-        <form className="eventForm">
-            <button className="btn btn-2 btn-sep icon-create"
-                    onClick={() => {
-                        navigate({ pathname: "/events/new" })
-                    }}
-                >Register New Event</button>
-            <h2 className="eventForm__title">Register New Event</h2>
+        <form>
+            <h2>New Event</h2>
             <fieldset>
                 <div className="form-group">
-                    <label htmlFor="title">Title: </label>
-                    <input type="text" name="title" required autoFocus className="form-control"
-                        value={currentEvent.title}
-                        onChange={changeEventState}
-                    />
+                    <label htmlFor="organizer">Organizer:</label>
+                    <input
+                        onChange={
+                            (evt) => {
+                                const copy = {...event}
+                                copy.organizer = evt.target.value
+                                setEvent(copy)
+                            }
+                        }
+                        required autoFocus
+                        type="text"
+                        className="form-control"
+                        placeholder="Organizer of Event"
+                        />
                 </div>
             </fieldset>
-
-            {/* TODO: create the rest of the input fields */}
-
-            <button type="submit"
-                onClick={evt => {
-                    // Prevent form from being submitted
-                    evt.preventDefault()
-
-                    const event = {
-                        maker: currentEvent.maker,
-                        title: currentEvent.title,
-                        number_of_players: parseInt(currentEvent.numberOfPlayers),
-                        skill_level: parseInt(currentEvent.skillLevel),
-                        event_type: parseInt(currentEvent.eventTypeId)
-                    }
-
-                    // Send POST request to your API
-                    createEvent(event)
-                        .then(() => navigate("/events"))
-                }}
-                className="btn btn-primary">Create</button>
+            <fieldset>
+                <input
+                required autoFocus
+                type="date"
+                className="form-control"
+                value= {event.date}
+                        onChange={
+                            (evt) => {
+                                const copy = {...event}
+                                copy.date = evt.target.value
+                                setEvent(copy)
+                            }
+                        }
+                        />
+            </fieldset>
+            <fieldset>
+                <div className="form-group">
+                    <label htmlFor="description">Description:</label>
+                    <input
+                        onChange={
+                            (evt) => {
+                                const copy = {...event}
+                                copy.description = evt.target.value
+                                setEvent(copy)
+                            }
+                        }
+                        required autoFocus
+                        type="text"
+                        className="form-control"
+                        placeholder="Description"
+                        />
+                </div>
+            </fieldset>
+            <fieldset>
+                <div className="form-group">
+                    <label htmlFor="numberOfPlayers">Number of Players:</label>
+                    <input
+                        onChange={
+                            (evt) => {
+                                const copy = {...event}
+                                copy.numberOfPlayers = evt.target.value
+                                setEvent(copy)
+                            }
+                        }
+                        required autoFocus
+                        type="text"
+                        className="form-control"
+                        placeholder="Number of Players"
+                        />
+                </div>
+            </fieldset>
+            <fieldset>
+                <div className="form-group">
+                    <label htmlFor="skillLevel">Skill Level:</label>
+                    <input
+                        onChange={
+                            (evt) => {
+                                const copy = {...event}
+                                copy.skillLevel = evt.target.value
+                                setEvent(copy)
+                            }
+                        }
+                        required autoFocus
+                        type="text"
+                        className="form-control"
+                        placeholder="Skill Level"
+                        />
+                </div>
+            </fieldset>
+            <fieldset>
+                <div className="form-group">
+                    <label htmlFor="eventType">Type of Event:</label>
+                    <select
+                        className='dogName-select'
+                        onChange={(evt) => {
+                            const copy = { ...event };
+                            copy.eventTypeId = evt.target.value;
+                            setEvent(copy);
+                        }}
+                    >
+                        <option value={0}>Please Select the Type of Event You Will Be Hosting</option>
+                        {eventTypes.map((eventType) => {
+                                return <option value={eventType.id}>{eventType.description}</option>;
+                        })}
+                    </select>
+                    <input
+                        onChange={
+                            (evt) => {
+                                const copy = {...event}
+                                copy.eventType = evt.target.value
+                                setEvent(copy)
+                            }
+                        }
+                        required autoFocus
+                        type="text"
+                        className="form-control"
+                        placeholder="Type of Event"
+                        />
+                </div>
+            </fieldset>
+            <button onClick={createEvent} className="btn btn-primary">
+                Create Event
+            </button>
         </form>
     )
 }
