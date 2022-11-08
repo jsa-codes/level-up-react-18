@@ -148,7 +148,7 @@ export const EventForm = () => {
                 <div className="form-group">
                     <label htmlFor="eventType">Type of Event:</label>
                     <select
-                        className='dogName-select'
+                        className='gameType'
                         onChange={(evt) => {
                             const copy = { ...event };
                             copy.eventTypeId = evt.target.value;

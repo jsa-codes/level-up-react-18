@@ -22,11 +22,9 @@ export const GameForm = () => {
 
     useEffect(() => {
         getGameTypes().then(data => setGameTypes(data))
-        // TODO: Get the game types, then set the state
     }, [])
 
     const changeGameState = (domEvent) => {
-        // TODO: Complete the onChange function
         const newGameState = { ...currentGame}
         newGameState[domEvent.target.id] = domEvent.target.value
         setCurrentGame(newGameState)
