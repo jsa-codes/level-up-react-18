@@ -49,14 +49,6 @@ export const createGame = (newGameObject) => {
     .then(response => response.json())
 }
 
-/* 
-    Game Details
-    title: "",
-    skillLevel: 1,
-    numberOfPlayers: 0,
-    maker: "",
-    gameTypeId: 0
-  */
 export const updateGame = (game) => { 
     return fetch(`http://localhost:8000/games/${game.id}`, {
         method: "PUT",
