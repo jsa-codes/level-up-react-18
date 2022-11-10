@@ -1,77 +1,92 @@
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { useNavigate } from 'react-router-dom'
-import { createGame, getGameTypes } from '../../managers/GameManager.js'
+import { createGame, getAllGameTypes } from '../../managers/GameManager.js'
 
 
 export const GameForm = () => {
-    const navigate = useNavigate()
-    const [gameTypes, setGameTypes] = useState([])
-
-    /*
-        Since the input fields are bound to the values of
-        the properties of this state variable, you need to
-        provide some default values.
-    */
-    const [currentGame, setCurrentGame] = useState({
+    const [game, updateGame] = useState({
+        title: "",
         skillLevel: 1,
         numberOfPlayers: 0,
-        title: "",
         maker: "",
         gameTypeId: 0
     })
 
+    const [gameTypes, setGameTypes] = useState([])
+    
+    const navigate = useNavigate()
+
     useEffect(() => {
-        getGameTypes().then(data => setGameTypes(data))
+        getAllGameTypes().then(setGameTypes)
     }, [])
 
-    const changeGameState = (domEvent) => {
-        const newGameState = { ...currentGame}
-        newGameState[domEvent.target.id] = domEvent.target.value
-        setCurrentGame(newGameState)
+    const submitGame = (evt) => {
+        evt.preventDefault()
+        const gameObject = {
+            maker: game.maker,
+            title: game.title,
+            numberOfPlayers: parseInt(game.numberOfPlayers),
+            skillLevel: parseInt(game.skillLevel),
+            gameType: parseInt(game.gameTypeId)
+                    }
+        createGame(gameObject).then(() => navigate("/games"))
+    }
 
+    const changeGameState = (evt) => {
+        const copy = { ...game }
+        copy[evt.target.id] = evt.target.value
+        updateGame(copy)
     }
 
     return (
-        <form className="gameForm">
-            <button className="btn btn-2 btn-sep icon-create"
-                    onClick={() => {
-                        navigate({ pathname: "/games/new" })
-                    }}
-                >Register New Game</button>
-            <h2 className="gameForm__title">Register New Game</h2>
-            <fieldset>
+        <>
+        <form className='game-form'>
+            <h2 className='gameForm__title'>Create New Game</h2>
+        <fieldset>
                 <div className="form-group">
                     <label htmlFor="title">Title: </label>
-                    <input type="text" name="title" id="title" required autoFocus className="form-control"
-                        value={currentGame.title}
-                        onChange={changeGameState}
+                    <input 
+                    onChange={changeGameState}
+                        required autoFocus
+                        type="text" id="title"
+                        className="form-control"
+                        placeholder="Game title"
                         />
                 </div>
             </fieldset>
             <fieldset>
                 <div className="form-group">
-                    <label htmlFor="title">Maker: </label>
-                    <input type="text" name="maker" id="maker" required autoFocus className="form-control"
-                        value={currentGame.maker}
-                        onChange={changeGameState}
+                    <label htmlFor="maker">Maker: </label>
+                    <input 
+                    onChange={changeGameState}
+                        required autoFocus
+                        type="text" id="maker"
+                        className="form-control"
+                        placeholder="Maker"
                     />
                 </div>
             </fieldset>
             <fieldset>
                 <div className="form-group">
                     <label htmlFor="numberOfPlayers">Number of Players: </label>
-                    <input type="number" name="numberOfPlayers" id="numberOfPlayers" required autoFocus className="form-control"
-                        value={currentGame.numberOfPlayers}
-                        onChange={changeGameState}
+                    <input 
+                    onChange={changeGameState}
+                        required autoFocus
+                        type="number" id="numberOfPlayers"
+                        className="form-control"
+                        placeholder="Number of Players"
                     />
                 </div>
             </fieldset>
             <fieldset>
                 <div className="form-group">
                     <label htmlFor="numberOfPlayers">Skill Level: </label>
-                    <input type="number" name="skillLevel" id="skillLevel" required autoFocus className="form-control"
-                        value={currentGame.skillLevel}
-                        onChange={changeGameState}
+                    <input 
+                    onChange={changeGameState}
+                        required autoFocus
+                        type="text" id="skillLevel"
+                        className="form-control"
+                        placeholder="Skill Level"
                     />
                 </div>
             </fieldset>
@@ -80,7 +95,7 @@ export const GameForm = () => {
                 <label htmlFor="gameType">Type of Game: </label>
                     <select name="gameType" id="gameTypeId"
                         onChange={changeGameState}
-                        defaultValue={currentGame.gameTypeId}>
+                        defaultValue={game.gameTypeId}>
                     <option value="0">Choose the Type of Game</option>
                     {
                         gameTypes.map(gameType => <option key={gameType.id} value={gameType.id}>{gameType.label}</option>)
@@ -89,25 +104,10 @@ export const GameForm = () => {
                 </div>
             </fieldset>
 
-
-            <button type="submit"
-                onClick={evt => {
-                    // Prevent form from being submitted
-                    evt.preventDefault()
-
-                    const game = {
-                        maker: currentGame.maker,
-                        title: currentGame.title,
-                        number_of_players: parseInt(currentGame.numberOfPlayers),
-                        skill_level: parseInt(currentGame.skillLevel),
-                        game_type: parseInt(currentGame.gameTypeId)
-                    }
-
-                    // Send POST request to your API
-                    createGame(game)
-                        .then(() => navigate("/games"))
-                }}
-                className="btn btn-primary">Create</button>
+            <button onClick={submitGame} className="btn btn-2 ">
+                Save Game
+            </button>
         </form>
+        </>
     )
 }

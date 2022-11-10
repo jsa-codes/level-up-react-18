@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react"
-import { getEvents } from "../../managers/EventManager"
+import { getAllEvents } from '../../managers/EventManager'
 
 export const EventList = (props) => {
     const [ events, setEvents ] = useState([])
 
     useEffect(() => {
-        getEvents().then(data => setEvents(data))
+        getAllEvents().then(data => setEvents(data))
     }, [])
 
     return (
