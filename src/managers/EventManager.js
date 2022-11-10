@@ -37,14 +37,14 @@ export const createEvent = (newEventObject) => {
     .then(response => response.json())
 }
 
-export const updateEvent = (event) => { 
-    return fetch(`http://localhost:8000/games/${event.id}`, {
+export const updateEvent = (body) => { 
+    return fetch(`http://localhost:8000/games/${body.id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Token ${localStorage.getItem("lu_token")}`
         },
-        body: JSON.stringify(event)
+        body: JSON.stringify(body)
     })
     .then
 } 
