@@ -24,7 +24,7 @@ export const getSingleEvent = (id) => {
 }
 
 
-export const createEvent = (newEventObject) => {
+export const createEvent = (event) => {
     return fetch(`http://localhost:8000/events`, { 
         method: "POST",
         headers:{
@@ -32,7 +32,7 @@ export const createEvent = (newEventObject) => {
             "Accept": "application/json",
             "Authorization": `Token ${localStorage.getItem("lu_token")}`
         },
-        body: JSON.stringify(newEventObject)
+        body: JSON.stringify(event)
     })
     .then(response => response.json())
 }
@@ -46,5 +46,6 @@ export const updateEvent = (body) => {
         },
         body: JSON.stringify(body)
     })
-    .then
+    .then()
+    
 } 

@@ -4,6 +4,9 @@ import { createGame, getAllGameTypes } from '../../managers/GameManager.js'
 
 
 export const GameForm = () => {
+    const [gameTypes, setGameTypes] = useState([])
+    const navigate = useNavigate()
+    
     const [game, updateGame] = useState({
         title: "",
         skillLevel: 1,
@@ -11,10 +14,6 @@ export const GameForm = () => {
         maker: "",
         gameTypeId: 0
     })
-
-    const [gameTypes, setGameTypes] = useState([])
-    
-    const navigate = useNavigate()
 
     useEffect(() => {
         getAllGameTypes().then(setGameTypes)
