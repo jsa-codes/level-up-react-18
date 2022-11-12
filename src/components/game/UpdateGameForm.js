@@ -1,30 +1,30 @@
 import { useState, useEffect } from "react"
 import { useNavigate, useParams } from 'react-router-dom'
-import { getGames, getGameTypes, updateGame } from '../../managers/GameManager.js'
+import { getGameTypes, getSingleGame, updateGame } from '../../managers/GameManager.js'
 
 
 
 export const UpdateGameForm = () => {
-    const navigate = useNavigate()
-    const [gameTypes, setGameTypes] = useState([])
+
     const { gameId } = useParams()
 
-    /*
-        Since the input fields are bound to the values of
-        the properties of this state variable, you need to
-        provide some default values.
-    */
     const [currentGame, setCurrentGame] = useState({})
 
-    useEffect(() => {
-        getGameTypes().then(data => setGameTypes(data))
-        getGames(gameId).then(data => setCurrentGame(data))
-    }, [])
+    const [gameTypes, setGameTypes] = useState([])
+
+    const navigate = useNavigate()
+
+
+    useEffect(
+        () => {
+            getSingleGame(gameId).then(game => setCurrentGame(game))
+            getGameTypes().then(type => setGameTypes(type))
+        }, [gameId])
 
     const changeGameState = (domEvent) => {
-        let stateGame = Object.assign({}, currentGame)
-        stateGame[domEvent.target.name] = domEvent.target.value
-        setCurrentGame(stateGame)
+        const newGame = Object.assign({}, currentGame)
+        newGame[domEvent.target.name] = domEvent.target.value
+        setCurrentGame(newGame)
     }
 
     return (
@@ -33,46 +33,49 @@ export const UpdateGameForm = () => {
             <fieldset>
                 <div className="form-group">
                     <label htmlFor="title">Title: </label>
-                    <input type="text" name="title" required autoFocus className="form-control"
+                    <input type="text" name="title" className="form-control"
+                        required autoFocus
                         value={currentGame.title}
                         onChange={changeGameState}
                     />
                 </div>
                 <div className="form-group">
                     <label htmlFor="maker">Maker: </label>
-                    <input type="text" name="maker" required className="form-control"
+                    <input type="text" name="maker" className="form-control"
+                        required autoFocus
                         value={currentGame.maker}
                         onChange={changeGameState}
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="numberOfPlayers">Number of Players: </label>
-                    <input type="text" name="number_of_players" required className="form-control"
+                    <label htmlFor="number_of_players">Number of Players: </label>
+                    <input type="number" name="number_of_players" className="form-control"
+                        required autoFocus
                         value={currentGame.number_of_players}
                         onChange={changeGameState}
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="skillLevel">Skill Level: </label>
-                    <input type="text" name="skill_level" required className="form-control"
+                    <label htmlFor="skill_level">Skill Level: </label>
+                    <input type="number" name="skill_level" className="form-control"
+                        required autoFocus
                         value={currentGame.skill_level}
                         onChange={changeGameState}
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="gameType">Game Type: </label>
-                    <select type="text" name="game_type" required autoFocus className="form-control"
-                        value={parseInt(currentGame.game_type)}
+                    <label htmlFor="game_type">Game Type: </label>
+                    <select id="type" name="game_type" className="form-control"
                         onChange={changeGameState}>
-                        <option value={0}>Select a Game Type</option>
+                        <option value={0}>{currentGame.game_type?.label}</option>
 
                         {
-                            gameTypes.map(gt => {
-                                return (
-                                    <option value={gt.id}>{gt.label}</option>
-                                )
-                            })
+                            gameTypes.map(gameType =>
+                                <option value={gameType.id} key={gameType.id}>{gameType.label}</option>
+                            )
                         }
+
+
                     </select>
                 </div>
             </fieldset>
@@ -84,19 +87,30 @@ export const UpdateGameForm = () => {
                     // Prevent form from being submitted
                     evt.preventDefault()
 
-                    const game = {
-                        id: parseInt(gameId),
-                        maker: currentGame.maker,
-                        title: currentGame.title,
-                        number_of_players: parseInt(currentGame.number_of_players),
-                        skill_level: parseInt(currentGame.skill_level),
-                        game_type: parseInt(currentGame.game_type),
-                        gamer: parseInt(currentGame.gamer)
-                    }
+                    if (currentGame.game_type.id) {
+                        const newGame = {
+                            maker: currentGame.maker,
+                            title: currentGame.title,
+                            numberOfPlayers: parseInt(currentGame.number_of_players),
+                            skillLevel: parseInt(currentGame.skill_level),
+                            gameType: parseInt(currentGame.game_type.id),
+                        }
 
-                    // Send POST request to your API
-                    updateGame(game)
-                        .then(navigate("/games"))
+                        // Send POST request to your API
+                        updateGame(newGame, gameId)
+                            .then(() => navigate(`/games/${gameId}`))
+                    }
+                    else {
+                        const newGame = {
+                            maker: currentGame.maker,
+                            title: currentGame.title,
+                            numberOfPlayers: parseInt(currentGame.number_of_players),
+                            skillLevel: parseInt(currentGame.skill_level),
+                            gameType: parseInt(currentGame.game_type),
+                        }
+                        updateGame(newGame, gameId)
+                            .then(() => navigate(`/games/${gameId}`))
+                    }
                 }}
                 className="btn btn-primary">Update</button>
         </form>
