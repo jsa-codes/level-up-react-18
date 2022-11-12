@@ -1,40 +1,32 @@
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { getSingleEvent } from '../../managers/EventManager.js'
-import { getSingleGame } from '../../managers/GameManager.js'
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { getSingleEvent } from "../../managers/EventManager";
+
 
 export const EventDetails = () => {
-  // Need to be able to access eventId
-  const { eventId } = useParams()
-  // State variable and Setter function for state variable
-  const [details, setDetails] = useState({
-  })
+  const { eventId } = useParams();
+  const [event, setEvent] = useState({});
+  const navigate = useNavigate()
 
-  // Create useEffect that monitors the state of gameId
-    // Gets a single game by its id then sets the details of the game
-  useEffect(
-    () => {
-    getSingleEvent(eventId).then(
-        (theEvent) => {
-          setDetails(theEvent)
-        }
-    )
-  }, [eventId])
 
-  
-  return <>
-    <h2>Your Event</h2>
-    <div>Organized by {details.organizer}</div>
-    <div>Description: {details.description}</div>
-    <div>Date of Event: {details.eve}</div>
-    
-    <h3>Type of game:</h3>
-    {
-      details.gameTypes.map(
-        type => <div>Type {type.game_type}</div>
-      )
-    }
-  </>
-  
+  useEffect(() => {
+    getSingleEvent(eventId)
+      .then(setEvent);
+  }, [eventId]);
 
+  return (
+    <>
+      <section className="game">
+        <h3 className="event__description">{event.description}</h3>
+        <div className="event__game">Game: {event.game?.title}</div>
+        <div className="event__datetime">Date and Time: {event.date} at {event.time}</div>
+        <div className="event__organizer">Organizer: {event.organizer?.full_name}</div>
+      </section>
+      <button className="btn btn-2 btn-sep icon-create"
+        onClick={() => {
+          navigate({ pathname: `/events/${eventId}/edit` })
+        }}
+      >Edit Event</button>
+    </>
+  );
 }

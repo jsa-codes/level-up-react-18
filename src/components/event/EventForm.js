@@ -1,7 +1,7 @@
 import { createEvent } from "../../managers/EventManager.js"
 import { useState, useEffect } from "react"
 import { useNavigate } from 'react-router-dom'
-import {  getAllGames } from '../../managers/GameManager.js'
+import {  getGames } from '../../managers/GameManager.js'
 
 
 export const EventForm = () => {
@@ -22,7 +22,7 @@ export const EventForm = () => {
     })
 
     useEffect(() => {
-        getAllGames().then(data => setGames(data))
+        getGames().then(data => setGames(data))
     }, [])
 
     const changeEventState = (evt) => {

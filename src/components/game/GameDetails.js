@@ -1,48 +1,37 @@
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { getSingleGame } from '../../managers/GameManager'
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { getSingleGame } from "../../managers/GameManager";
+
 
 export const GameDetails = () => {
-  // Need to be able to access gameId
-  const { gameId } = useParams()
-  // State variable and Setter function for state variable
-  const [details, setDetails] = useState({
-      gameTypes: []
-  })
+  const { gameId } = useParams();
+  const [game, setGame] = useState({});
 
-  // Create useEffect that monitors the state of gameId
-    // Gets a single game by its id then sets the details of the game
-  useEffect(
-    () => {
-    getSingleGame(gameId).then(
-        (theGame) => {
-          setDetails(theGame)
-        }
-    )
-  }, [gameId])
+  const navigate = useNavigate()
 
-  /* 
-    Game Details
-    title: "",
-    skillLevel: 1,
-    numberOfPlayers: 0,
-    maker: "",
-    gameTypeId: 0
-  */
-  return <>
-    <h2>{details.title}</h2>
 
-    <div>Made by {details.maker}</div>
-    <div>Skill Level: {details.skillLevel}</div>
-    <div>Can be played by {details.numberOfPlayers}</div>
-    
-    <h3>Type of game:</h3>
-    {
-      details.gameTypes.map(
-        type => <div>Type {type.game_type}</div>
-      )
-    }
-  </>
-  
+  useEffect(() => {
+    getSingleGame(gameId)
+      .then(game => setGame(game));
+  }, [gameId]);
 
+  return (
+    <>
+
+      <section key={`game--${game.id}`} className="game">
+        <h3 className="game__name">{game.title}</h3>
+        <div className="game__type">Game Type: {game.game_type?.label}</div>
+        <div className="game__maker">Maker: {game.maker}</div>
+        <div className="game__players">{game.number_of_players} players needed</div>
+        <div className="game__skillLevel">Skill level is {game.skill_level}</div>
+
+        <button className="btn btn-2 btn-sep icon-create"
+          onClick={() => {
+            navigate({ pathname: `/games/update/${game.id}` })
+          }}
+        >Edit Game</button>
+      </section>
+
+    </>
+  );
 }

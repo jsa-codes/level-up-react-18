@@ -1,4 +1,4 @@
-export const getAllGames = () => {
+export const getGames = () => {
     return fetch(`http://localhost:8000/games`, {
         method: "GET",
         headers:{
@@ -33,7 +33,7 @@ export const createGame = (game) => {
         },
         body: JSON.stringify(game)
     })
-    .then(response => response.json())
+    .then(response => response.json(game))
 }
 
 export const updateGame = (game) => { 
@@ -45,10 +45,10 @@ export const updateGame = (game) => {
         },
         body: JSON.stringify(game)
     })
-    .then()
+    .then(response => response.json())
 }
 
-export const getAllGameTypes = () => {
+export const getGameTypes = () => {
     return fetch(`http://localhost:8000/gametypes`, { 
         method: "GET",
         headers:{
